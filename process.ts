@@ -35,7 +35,7 @@ function processFile(filePath: string): Promise<void> {
       .then((data) => {
         //does it have a hash column? if so, reject with an error
         if (data[0].hasOwnProperty(HashColumnName)) {
-          reject(new Error("CSV file has a hash column"));
+          return reject(new Error("CSV file already has a hash column. Exiting."));
         }
 
         console.log("first row: ", data[0]);
