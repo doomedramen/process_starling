@@ -3,6 +3,7 @@ import csv from "csv";
 import { stringify } from "csv-stringify/sync";
 import readline from "readline";
 import crypto from "crypto";
+import path from "path";
 
 //create a type for the csv data
 export type CsvData = {
@@ -10,6 +11,8 @@ export type CsvData = {
 };
 
 const HashColumnName = "Hash";
+
+const HashedFilePostfix = "_hashed";
 
 const parse = csv.parse({ columns: true });
 
@@ -45,8 +48,14 @@ function processFile(filePath: string): Promise<void> {
               .digest("hex");
         });
 
+        //get text before first dot in filePath and append _hashed
+        const fileName = path.basename(filePath, path.extname(filePath));
+        const hashedFileName = fileName + HashedFilePostfix + path.extname(filePath);
+        const hashedFilePath = path.join(path.dirname(filePath), hashedFileName);
+        
+
         //convert to csv and save
-        fs.writeFile(filePath, stringify(data, { header: true }), (err) => {
+        fs.writeFile(hashedFilePath, stringify(data, { header: true }), (err) => {
           if (err) {
             reject(err);
           } else {
